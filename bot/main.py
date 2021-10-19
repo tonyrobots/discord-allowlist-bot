@@ -9,8 +9,8 @@ async def on_ready():
     print(f"Logged in as {bot.user.name}({bot.user.id})")
 
 @bot.command()
-async def ping(ctx):
-    await ctx.send("pong")
+async def gm(ctx):
+    await ctx.send("gm to you, " + command.user.name)
 
 if __name__ == "__main__":
     bot.run(TOKEN)
