@@ -73,11 +73,11 @@ async def allow(message, arg):
         # print(f'writing to db ' + message.author.name + ' as role ' + approved_role)
         result_message = add_to_list(message.author, approved_role, wallet)
         # await message.channel.send('Hello, ' + message.author.name +'!' + ' You are added to the ' + approved_role + ' list.')
-        await message.channel.send('Hello, ' + message.author.name +'! ' + result_message)
+        await message.channel.send(f"Hello, {message.author.name}! {result_message}")
 
     else:
         print('not an approved role!')
-        await message.channel.send('Hello, ' + message.author.name +'! ' + "Sorry, you don't appear to be eligible. If you think this is an error, contact @gm")
+        await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be eligible. If you think this is an error, contact @gm")
 
 # listen for !check command
 
@@ -92,7 +92,7 @@ async def check(message):
         await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be on the '{my_list}' list. Use !allow <wallet address> to add yourself.")
     else:
         list_entry = get_list_entry(message.author)
-        await message.channel.send(f'Hi, {message.author.name}! You are in list {list_entry["listname"]} with wallet {list_entry["wallet"]}')
+        await message.channel.send(f'Hi, {message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
 
 
 #### helper functions
@@ -109,11 +109,14 @@ def add_to_list(member, list, wallet):
     if user_not_in_list(member, list):
         # add user to list
         collection.insert_one(list_entry)
-        return f'You are added to the {list} list.'    
+        return f'You are added to the {list} list with wallet: {wallet}.'    
     else:
         # user already exists, update previous record instead of adding
-        collection.find_one_and_update({"project": PROJECT_NAME, "discordID": member.id, "listname": list}, {"$set": {"wallet": wallet}})
-        return f'You were already on the "{list}" list, but your record has been updated with the new wallet info: {wallet}'
+        old_record = collection.find_one_and_update({"project": PROJECT_NAME, "discordID": member.id, "listname": list}, {"$set": {"wallet": wallet}})
+        if old_record['wallet'] == wallet:
+            return f'You were already on the "{list}" list with that wallet address, so nothing has changed.'
+        else:
+            return f'You were already on the "{list}" list, but your record has been updated with the new wallet info: {wallet}'
 
 def get_list_entry(member):
         myquery = { "discordID": member.id, "project": PROJECT_NAME, "listname":check_eligibility(member)  }
