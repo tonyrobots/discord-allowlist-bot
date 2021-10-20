@@ -55,7 +55,7 @@ async def on_ready():
 #     await message.channel.send('use !check to check your current list status, and !allow <wallet address> to add yourself to the allow list. (Note: ENS names like example.eth are not accepted.')
 
 # listen for !allow command
-@bot.command()
+@bot.command(brief='!allow <wallet address> to add your wallet address to the appropriate allow list.', usage="<wallet>", aliases=["add"], cog_name='General')
 async def allow(message, arg):
     if message.author == bot.user:
         return
@@ -64,7 +64,7 @@ async def allow(message, arg):
     wallet = validate_wallet(arg)
 
     if not wallet:
-        await message.channel.send("that's not a valid wallet address")
+        await message.channel.send(f"Sorry, {arg} is not a valid wallet address. (Note: ENS names like 'example.eth' are not supported.)")
         return
 
     if check_eligibility(message.author):
@@ -80,16 +80,19 @@ async def allow(message, arg):
         await message.channel.send('Hello, ' + message.author.name +'! ' + "Sorry, you don't appear to be eligible. If you think this is an error, contact @gm")
 
 # listen for !check command
-@bot.command()
+
+
+@bot.command(brief='!check to check your current list status.', cog_name='General')
 async def check(message):
     if message.author == bot.user:
         return
 
-    if user_not_in_list(message.author):
-        await message.channel.send('Hello, ' + message.author.name +'! ' + "Sorry, you don't appear to be on the list. Use !allow <wallet address> to add yourself.")
+    my_list = check_eligibility(message.author)
+    if user_not_in_list(message.author, my_list):
+        await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be on the '{my_list}' list. Use !allow <wallet address> to add yourself.")
     else:
         list_entry = get_list_entry(message.author)
-        await message.channel.send('Hi, ' + message.author.name +'! You are in list ' + list_entry["listname"] )
+        await message.channel.send(f'Hi, {message.author.name}! You are in list {list_entry["listname"]} with wallet {list_entry["wallet"]}')
 
 
 #### helper functions
@@ -103,14 +106,14 @@ def check_eligibility(member): # returns top qualifying role for user
 
 def add_to_list(member, list, wallet):
     list_entry = {"project": PROJECT_NAME, "username": member.name, "discordID":member.id, "listname": list, "wallet": wallet, "joinDate": member.joined_at, "currentDate": datetime.datetime.utcnow()}
-    if user_not_in_list(member):
+    if user_not_in_list(member, list):
         # add user to list
         collection.insert_one(list_entry)
         return f'You are added to the {list} list.'    
     else:
         # user already exists, update previous record instead of adding
-        # collection.find_one_and_update({project:})
-        return 'You were already listed, but your record has been NOT YET updated with the new wallet info'
+        collection.find_one_and_update({"project": PROJECT_NAME, "discordID": member.id, "listname": list}, {"$set": {"wallet": wallet}})
+        return f'You were already on the "{list}" list, but your record has been updated with the new wallet info: {wallet}'
 
 def get_list_entry(member):
         myquery = { "discordID": member.id, "project": PROJECT_NAME, "listname":check_eligibility(member)  }
@@ -118,8 +121,8 @@ def get_list_entry(member):
         return list_entry
 
 
-def user_not_in_list(member):
-    myquery = { "discordID": member.id } # only checking discord ID, should check id, list, project
+def user_not_in_list(member,list):
+    myquery = { "discordID": member.id, "listname": list, "project": PROJECT_NAME  } # only checking discord ID, should check id, list, project
     # print (f"found {collection.count_documents(myquery)} docs that match your discord ID {member.id}")
     return (collection.count_documents(myquery) == 0)
     
@@ -131,6 +134,9 @@ def validate_wallet(wallet = ""):
     # return EthereumAddress(wallet)
     # return /^0x[a-fA-F0-9]{40}$/
     print(f"checking wallet {wallet}, found {address}")
-    return address
+    if address:
+        return address.string
+    else:
+        return False
 
 bot.run(TOKEN)
