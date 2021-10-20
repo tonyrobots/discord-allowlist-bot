@@ -1,1 +1,2 @@
 discord.py
+pymongo==3.12.1
