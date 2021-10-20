@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv() # uncomment on dev!
 
 bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
