@@ -1,0 +1,6 @@
+To Do:
+
+- Make it more portable/plug and play on different servers
+- How to specify allowed roles? Have to do it with code change? Possible to accomodate multiple guilds?
+- Check against allowed guilds list. Is this the way to go? Do I need config table/collection?
+- testing
