@@ -4,6 +4,7 @@ from discord.ext import commands
 import discord
 import datetime
 import re
+from discord.permissions import Permissions
 import pymongo
 from pymongo import MongoClient
 
@@ -26,7 +27,7 @@ MONGO_URL = os.getenv("MONGO_URL")
 TESTING = True
 
 PROJECT_NAME = "CF Test"
-ALLOWED_ROLES = ["Friends", "Blerxers"] # Wonder how to set via a config UI
+ALLOWED_ROLES = ["Blerxers", "Friends"]  # Wonder how to set via a config UI
 
 cluster = MongoClient(MONGO_URL)
 db = cluster["AllowList"]
@@ -38,6 +39,7 @@ else:
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+    await bot.change_presence(activity=discord.Game('Accepting wallet addresses'))
     for guild in bot.guilds:
         if guild.name == GUILD:
             break
@@ -56,7 +58,6 @@ async def allow(message, arg):
     if message.author == bot.user:
         return
 
-    # arg = "0xca3a1d145Bf23674BD762Fa1A87EfE14BcfEa852"
     wallet = validate_wallet(arg)
 
     if not wallet:
@@ -87,6 +88,37 @@ async def check(message):
     else:
         list_entry = get_list_entry(message.author)
         await message.channel.send(f'Hi, {message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
+
+# listen for !roles command
+@bot.command(brief='!roles to see allow-listed Discord roles', cog_name='General')
+async def roles(message):
+    rolesStr = "Allowed Roles: \n"
+    for role in ALLOWED_ROLES:
+        rolesStr += f"\t{role}\n"
+    await message.channel.send(rolesStr)
+
+# listen for !count command
+@bot.command(brief='!count to see current allowlist count', cog_name='General')
+@commands.has_permissions(manage_guild=True) # must have manage_guild (server) perms to do count command
+async def count(message, arg=""):
+    doc_count = collection.count_documents({"project": PROJECT_NAME})
+    respString = (f"There are currently {doc_count} addresses on the allowlist.\n")
+    if arg=="v" or arg=="verbose":
+        for role in ALLOWED_ROLES:
+            role_count = collection.count_documents({"project": PROJECT_NAME, "listname": role})
+            respString += f"{role}: {role_count}\n"
+
+    await message.channel.send(respString)
+
+        
+
+# # listen for !export command
+# @bot.command(brief='!export current allowlist as CSV', cog_name='Admin')
+# @commands.has_permissions(manage_guild=True)
+# async def export(message):
+#     doc_count = collection.count_documents({"project": PROJECT_NAME})
+#     await message.channel.send(f"There are currently {doc_count} addresses on the allowlist.")
+
 
 #### helper functions
 
@@ -121,6 +153,10 @@ def user_not_in_list(member,list):
     myquery = { "discordID": member.id, "listname": list, "project": PROJECT_NAME  } # only checking discord ID, should check id, list, project
     # print (f"found {collection.count_documents(myquery)} docs that match your discord ID {member.id}")
     return (collection.count_documents(myquery) == 0)
+
+
+# def export_csv(query='{"project": PROJECT_NAME}'):
+
     
 
 def validate_wallet(wallet = ""):
@@ -134,5 +170,8 @@ def validate_wallet(wallet = ""):
         return address.string
     else:
         return False
+
+# def user_is_admin(member):
+#     return member.hasPermissions(manage_guild=True)
 
 bot.run(TOKEN)
