@@ -50,10 +50,6 @@ async def on_ready():
 
 ### command listeners
 
-#listen for !help command
-# @bot.command()
-#     await message.channel.send('use !check to check your current list status, and !allow <wallet address> to add yourself to the allow list. (Note: ENS names like example.eth are not accepted.')
-
 # listen for !allow command
 @bot.command(brief='!allow <wallet address> to add your wallet address to the appropriate allow list.', usage="<wallet>", aliases=["add"], cog_name='General')
 async def allow(message, arg):
@@ -80,8 +76,6 @@ async def allow(message, arg):
         await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be eligible. If you think this is an error, contact @gm")
 
 # listen for !check command
-
-
 @bot.command(brief='!check to check your current list status.', cog_name='General')
 async def check(message):
     if message.author == bot.user:
@@ -93,7 +87,6 @@ async def check(message):
     else:
         list_entry = get_list_entry(message.author)
         await message.channel.send(f'Hi, {message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
-
 
 #### helper functions
 
