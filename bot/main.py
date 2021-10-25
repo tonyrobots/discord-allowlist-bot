@@ -19,7 +19,7 @@ if not os.getenv("env") == "dev":
     TESTING = False
 else:
     from dotenv import load_dotenv
-    load_dotenv() # uncomment on dev!
+    load_dotenv() 
     TESTING = True
 
 bot = commands.Bot(command_prefix="!")
