@@ -16,9 +16,11 @@ logging.basicConfig(level=logging.INFO)
 if not os.getenv("env") == "dev":
     os.environ['http_proxy'] = os.environ.get('FIXIE_URL', '')
     os.environ['https_proxy'] = os.environ.get('FIXIE_URL', '')
+    TESTING = False
 else:
     from dotenv import load_dotenv
     load_dotenv() # uncomment on dev!
+    TESTING = True
 
 bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
