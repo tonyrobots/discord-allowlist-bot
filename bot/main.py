@@ -26,7 +26,7 @@ ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
 TESTING = True
 
-ALLOWED_ROLES = ["Blerxers", "Friends"]  # Wonder how to set via a config UI
+ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Friends", "Blerxers"]  # Wonder how to set via a config UI
 
 cluster = MongoClient(MONGO_URL)
 db = cluster["AllowList"]
@@ -85,8 +85,13 @@ async def check(message):
         return
 
     my_list = check_eligibility(message.author)
+
+    if not my_list:
+        await message.channel.send(f"Sorry, {message.author.name}. You don't seem to have a role eligible for the allow list.")
+        return
+
     if user_not_in_list(message.author, my_list, message.guild.name):
-        await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be on the '{my_list}' list. Use !allow <wallet address> to add yourself.")
+        await message.channel.send(f"Hello, {message.author.name}! You are eligible for the '{my_list}' list. Use !allow <wallet address> to add yourself.")
     else:
         list_entry = get_list_entry(message)
         await message.channel.send(f'Hi, {message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
@@ -95,7 +100,8 @@ async def check(message):
 @bot.command(brief='!roles to see allow-listed Discord roles', cog_name='General')
 async def roles(message):
     rolesStr = "Allowed Roles: \n"
-    for role in ALLOWED_ROLES:
+
+    for role in get_eligible_guild_roles(message.guild):
         rolesStr += f"\t{role}\n"
     await message.channel.send(rolesStr)
 
@@ -107,7 +113,7 @@ async def count(message, arg=""):
     doc_count = collection.count_documents({"project": project_name})
     respString = (f"There are currently {doc_count} addresses on the allowlist.\n")
     if arg=="v" or arg=="verbose":
-        for role in ALLOWED_ROLES:
+        for role in get_eligible_guild_roles(message.guild):
             role_count = collection.count_documents({"project": project_name, "listname": role})
             respString += f"{role}: {role_count}\n"
 
@@ -161,6 +167,13 @@ def user_not_in_list(member, list, project):
     # print (f"found {collection.count_documents(myquery)} docs that match your discord ID {member.id}")
     return (collection.count_documents(myquery) == 0)
 
+def get_eligible_guild_roles(guild):
+    my_roles=[]
+    for role in guild.roles:
+        # if role in message.guild.roles:
+        if role.name in ALLOWED_ROLES:
+            my_roles.insert(0,role.name)
+    return my_roles
 
 # def export_csv(query='{"project": PROJECT_NAME}'):
 
