@@ -77,7 +77,7 @@ async def allow(message, arg):
 
     else:
         print('not an approved role!')
-        await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be eligible. If you think this is an error, contact @gm")
+        await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be eligible. If you think this is an error, contact @DM")
 
 # listen for !check command
 @bot.command(brief='!check to check your current list status.', cog_name='General')
@@ -164,8 +164,7 @@ def get_list_entry(message):
 
 def user_not_in_list(member, list, project):
     project_name = project  # should check to see if in allowed guilds
-    myquery = { "discordID": member.id, "listname": list, "project": project_name  } # only checking discord ID, should check id, list, project
-    # print (f"found {collection.count_documents(myquery)} docs that match your discord ID {member.id}")
+    myquery = { "discordID": member.id, "listname": list, "project": project_name  } 
     return (collection.count_documents(myquery) == 0)
 
 def get_eligible_guild_roles(guild):
