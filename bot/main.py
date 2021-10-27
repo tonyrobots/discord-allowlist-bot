@@ -26,7 +26,6 @@ bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
 ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
-TESTING = True
 
 ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Friends", "Blerxers"]  # Wonder how to set via a config UI
 
