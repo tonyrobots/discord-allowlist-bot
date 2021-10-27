@@ -89,7 +89,7 @@ async def check(message):
     my_list = check_eligibility(message.author)
 
     if not my_list:
-        await message.channel.send(f"Sorry, {message.author.name}. You don't seem to have a role eligible for the allow list.")
+        await message.channel.send(f"Sorry, {message.author.name}. You don't seem to have a role eligible for the allow list. Try !roles to see eligible roles")
         return
 
     if user_not_in_list(message.author, my_list, message.guild.name):
