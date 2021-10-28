@@ -73,11 +73,11 @@ async def allow(message, arg):
         # print(f'writing to db ' + message.author.name + ' as role ' + approved_role)
         result_message = add_to_list(message.author, approved_role, wallet, message.guild.name)
         # await message.channel.send('Hello, ' + message.author.name +'!' + ' You are added to the ' + approved_role + ' list.')
-        await message.channel.send(f"Hello, {message.author.name}! {result_message}")
+        await message.channel.send(f"Hey, {message.author.nick or message.author.name}! {result_message}")
 
     else:
         print('not an approved role!')
-        await message.channel.send(f"Hello, {message.author.name}! Sorry, you don't appear to be eligible. If you think this is an error, contact @DM")
+        await message.channel.send(f"Sorry, {message.author.nick or message.author.name}! You don't seem to have a role eligible for the allow list. Try !roles to see eligible roles.")
 
 # listen for !check command
 @bot.command(brief='!check to check your current list status.', cog_name='General')
@@ -88,14 +88,14 @@ async def check(message):
     my_list = check_eligibility(message.author)
 
     if not my_list:
-        await message.channel.send(f"Sorry, {message.author.name}. You don't seem to have a role eligible for the allow list. Try !roles to see eligible roles")
+        await message.channel.send(f"Sorry, {message.author.nick or message.author.name}. You don't seem to have a role eligible for the allow list. Try !roles to see eligible roles.")
         return
 
     if user_not_in_list(message.author, my_list, message.guild.name):
-        await message.channel.send(f"Hello, {message.author.name}! You are eligible for the '{my_list}' list. Use !allow <wallet address> to add yourself.")
+        await message.channel.send(f"Hello, {message.author.nick or message.author.name}! You are eligible for the '{my_list}' list. Use !allow <wallet address> to add yourself.")
     else:
         list_entry = get_list_entry(message)
-        await message.channel.send(f'Hi, {message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
+        await message.channel.send(f'Hi, {message.author.nick or message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
 
 # listen for !roles command
 @bot.command(brief='!roles to see allow-listed Discord roles', cog_name='General')
