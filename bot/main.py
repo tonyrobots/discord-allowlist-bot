@@ -92,7 +92,7 @@ async def check(message):
         return
 
     if user_not_in_list(message.author, my_list, message.guild.name):
-        await message.channel.send(f"Hello, {message.author.nick or message.author.name}! You are eligible for the '{my_list}' list. Use !allow <wallet address> to add yourself.")
+        await message.channel.send(f"Hello, {message.author.nick or message.author.name}! You are eligible for the '{my_list}' list, but haven't added your wallet address yet. Use !allow <wallet address> to add yourself.")
     else:
         list_entry = get_list_entry(message)
         await message.channel.send(f'Hi, {message.author.nick or message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
