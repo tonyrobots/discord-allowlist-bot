@@ -21,9 +21,12 @@ if not os.getenv("env") == "dev":
     os.environ['https_proxy'] = os.environ.get('FIXIE_URL', '')
     TESTING = False
     SLOT_CHANCE = 1/100
-    SLOT_WIN = ":LMaps_crown:"
-    SLOT_LOSS = [":LMaps_wiz_sad:", ":Lmaps_wiz_mad:",
-                 ":Lmaps_torch:", ":Lmaps_skel:", ":Lmaps_swords:", ":Lmaps_potion:"]
+    # SLOT_WIN = ":LMaps_crown:"
+    # SLOT_LOSS = [":LMaps_wiz_sad:", ":Lmaps_wiz_mad:",
+    #              ":Lmaps_torch:", ":Lmaps_skel:", ":Lmaps_swords:", ":Lmaps_potion:"]
+    SLOT_WIN = ":crossed_swords:"
+    SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:",
+                 ":frowning2:", ":skull:"]
 
 else:
     # DEV Settings
@@ -32,7 +35,7 @@ else:
     TESTING = True
     SLOT_CHANCE = 75/100
     SLOT_WIN = ":crossed_swords:"
-    SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:", ":frowning2:"]
+    SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:", ":frowning2:", ":skull:"]
 
 bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
