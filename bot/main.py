@@ -21,12 +21,18 @@ if not os.getenv("env") == "dev":
     os.environ['https_proxy'] = os.environ.get('FIXIE_URL', '')
     TESTING = False
     SLOT_CHANCE = 1/100
+    SLOT_WIN = ":LMaps_crown:"
+    SLOT_LOSS = [":LMaps_wiz_sad:", ":Lmaps_wiz_mad:",
+                 ":Lmaps_torch:", ":Lmaps_skel:", ":Lmaps_swords:", ":Lmaps_potion:"]
+
 else:
     # DEV Settings
     from dotenv import load_dotenv
     load_dotenv() 
     TESTING = True
     SLOT_CHANCE = 75/100
+    SLOT_WIN = ":crossed_swords:"
+    SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:", ":frowning2:"]
 
 bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -142,12 +148,16 @@ async def count(message, arg=""):
 
     await message.channel.send(respString)
 
-#### Slot Machine stuff, needs some clean-up
-# SLOT_WIN = ":LMaps_crown:"
-# SLOT_LOSS = [":LMaps_wiz_sad:", ":Lmaps_wiz_mad:"]
+# listen for !info command
 
-SLOT_WIN = ":crossed_swords:"
-SLOT_LOSS = [":dizzy_face:",":face_with_spiral_eyes:", ":frowning2:"]
+
+@bot.command(hidden=True)
+# must have manage_guild (server) perms to do this command
+@commands.has_permissions(manage_guild=True)
+async def info(message):
+    await message.channel.send(f"`slot odds: {SLOT_CHANCE} `")
+
+#### Slot Machine stuff, needs some clean-up
 slot_result = ["","",""]
 
 # listen for !slot command
