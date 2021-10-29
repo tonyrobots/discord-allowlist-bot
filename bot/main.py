@@ -16,22 +16,30 @@ logging.basicConfig(level=logging.INFO)
 
 
 if not os.getenv("env") == "dev":
+    # PRODUCTION Settings
     os.environ['http_proxy'] = os.environ.get('FIXIE_URL', '')
     os.environ['https_proxy'] = os.environ.get('FIXIE_URL', '')
     TESTING = False
+    SLOT_CHANCE = 1/100
 else:
+    # DEV Settings
     from dotenv import load_dotenv
     load_dotenv() 
     TESTING = True
+    SLOT_CHANCE = 75/100
 
 bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
 ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
-ALLOWED_CHANNELS_SLOTS = ["slot-machine"] #only used by slotmachine
+ALLOWED_CHANNELS_SLOTS = ["slot-machine",
+                          "🎰│slot-machine"]  # only used by slotmachine
+ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
+                                "allowlist", "bots", "📝│whitelist"]  # only used by allow lister, not !slot
 
 
-ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Lucky Devil", "Friends", "Blerxers"]  # Wonder how to set via a config UI
+
+ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Friends", "Blerxers"]  # Wonder how to set via a config UI
 
 cluster = MongoClient(MONGO_URL)
 db = cluster["AllowList"]
@@ -62,6 +70,11 @@ async def on_ready():
 # listen for !allow command
 @bot.command(brief='!allow <wallet address> to add your wallet address to the appropriate allow list.', usage="<wallet>", aliases=["add"], cog_name='General')
 async def allow(message, arg):
+    #only allow in defined channel(s)
+    if not is_allowed_channel(message, ALLOWED_CHANNELS_ALLOWLISTER):
+        await wrong_channel_message(message, ALLOWED_CHANNELS_ALLOWLISTER)
+        return
+
     if message.author == bot.user:
         return
 
@@ -86,6 +99,11 @@ async def allow(message, arg):
 # listen for !check command
 @bot.command(brief='!check to check your current list status.', cog_name='General')
 async def check(message):
+    #only allow in defined channel(s)
+    if not is_allowed_channel(message, ALLOWED_CHANNELS_ALLOWLISTER):
+        await wrong_channel_message(message,ALLOWED_CHANNELS_ALLOWLISTER)
+        return
+    
     if message.author == bot.user:
         return
 
@@ -135,17 +153,29 @@ slot_result = ["","",""]
 # listen for !slot command
 @bot.command(brief='!slot to try your luck (only in the slot-machine channel)')
 async def slot(message):
-    # exit command if not the desired channel.
-    if ALLOWED_CHANNELS_SLOTS and message.channel.name not in ALLOWED_CHANNELS_SLOTS:
-        await message.reply("You can only do that in the following channels: " + ','.join(ALLOWED_CHANNELS_SLOTS))
+    # exit command if not an allowed channel.
+    #only allow in defined channel(s)
+    if not is_allowed_channel(message, ALLOWED_CHANNELS_SLOTS):
+        await wrong_channel_message(message, ALLOWED_CHANNELS_SLOTS)
         return
 
     if slot_win(message):
-        await message.reply(SLOT_WIN + SLOT_WIN + SLOT_WIN + " -- Winner Winner Chicken Dinner!")
+        await message.reply(f"{SLOT_WIN}  {SLOT_WIN}  {SLOT_WIN} -- Winner Winner Chicken Dinner!")
         # set member role to Lucky Devil
-        winner_role = get(message.guild.roles, name="Lucky Devil")
-        await message.author.add_roles(winner_role)
-        await message.reply(f"You were added to the {winner_role} role, and can now add yourself to the allow list." )
+
+        # TODO clean this up!
+        winner_role1 = get(message.guild.roles, name="Lucky Devil")
+
+        # only give uncommon wanderer if they don't have a higher role. Really gotta generalize this!
+        if check_eligibility(message.author):
+            await message.reply(f"You already had an eligible role, so we'll just call you a lucky devil :)")
+            await message.author.add_roles(winner_role1)
+        else:
+            winner_role2 = get(message.guild.roles, name="Uncommon Wanderer")
+            await message.author.add_roles(winner_role1, winner_role2)
+
+            await message.reply(f"You are now a {winner_role2}, and can now add yourself in the whitelist channel with command !allow <wallet address>.")
+
     else:
         wins = random.randint(0,2)
         for i in range(3):
@@ -154,9 +184,7 @@ async def slot(message):
                 wins -= 1
             else:
                 slot_result[i] = random.choice(SLOT_LOSS)
-        await message.reply(slot_result[0] + slot_result[1] + slot_result[2] + " -- Sorry, you didn't win.")
-
-        # await message.reply(SLOT_LOSS[0] + SLOT_LOSS[1] + SLOT_WIN)
+        await message.reply(f"{slot_result[0]}  {slot_result[1]}  {slot_result[2]}  -- Sorry, you didn't win.")
 
 
 # # listen for !export command
@@ -215,7 +243,7 @@ def get_eligible_guild_roles(guild):
 # def export_csv(query='{"project": PROJECT_NAME}'):
 
 def slot_win(message):
-    if random.random() < .3:
+    if random.random() < SLOT_CHANCE: 
         return True
     else:
         return False
@@ -231,6 +259,27 @@ def validate_wallet(wallet = ""):
         return address.string
     else:
         return False
+
+def is_allowed_channel(message, allowed_channels):
+    if allowed_channels and message.channel.name not in allowed_channels:
+        return False
+    else:
+        return True
+
+def filter_channels(message, channels):
+    filtered_channels = []
+    for channel in message.guild.text_channels:
+        print(channel)
+        if channel in channels:
+            filtered_channels.append(channel)
+
+    return filtered_channels
+
+async def wrong_channel_message(message,allowed_channels):
+    # filtered_allowed_channels = filter_channels(message, allowed_channels)
+    # await message.reply("You can only do that in the following channels: " + ', '.join(filtered_allowed_channels))
+    await message.reply("Sorry, you can't do that in this channel.")
+
 
 # def user_is_admin(member):
 #     return member.hasPermissions(manage_guild=True)
