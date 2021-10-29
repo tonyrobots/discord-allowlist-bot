@@ -42,9 +42,9 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
 ALLOWED_CHANNELS_SLOTS = ["slot-machine",
-                          "🎰│slot-machine"]  # only used by slotmachine
+                          "🎰│slot-machine","admin-test-channel"]  # only used by slotmachine
 ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
-                                "allowlist", "bots", "📝│whitelist"]  # only used by allow lister, not !slot
+                                "allowlist", "bots", "📝│whitelist","admin-test-channel"]  # only used by allow lister, not !slot
 
 
 
