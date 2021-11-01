@@ -54,7 +54,7 @@ ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
 ALLOWED_CHANNELS_SLOTS = ["oracle", "admin-test-channel"]  # only used by slotmachine
 ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
-                                "allowlist", "bots", "📝│whitelist","admin-test-channel"]  # only used by allow lister, not !slot
+                                "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
 ENABLE_ORACLE = True
 
