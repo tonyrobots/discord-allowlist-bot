@@ -26,7 +26,7 @@ base_dir = os.path.dirname(__file__)
 #              "<:LMaps_potion:902296702424350741>"]
 
 SLOT_WIN = ":crown:"
-SLOT_LOSS = [":skull_crossbones:", ":skull:", ":crescent_moon:",":crossed_swords:",":wolf:",":black_cat:",":bone:",":dragon_face:",":mushroom:"]
+SLOT_LOSS = [":skull_crossbones:", ":skull:", ":crescent_moon:", ":crossed_swords:", ":wolf:", ":black_cat:", ":bone:", ":dragon_face:", ":mushroom:", "🌞", "👹", "👻","👁️","🧝‍♂️","🧚‍♀️","🧙"]
 
 
 def get_list_from_file(filename):
