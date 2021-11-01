@@ -33,7 +33,7 @@ if not os.getenv("env") == "dev":
     os.environ['http_proxy'] = os.environ.get('FIXIE_URL', '')
     os.environ['https_proxy'] = os.environ.get('FIXIE_URL', '')
     TESTING = False
-    SLOT_CHANCE = 1/40
+    SLOT_CHANCE = 1/30
 
     # SLOT_WIN = ":crossed_swords:"
     # SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:",
@@ -44,7 +44,7 @@ else:
     from dotenv import load_dotenv
     load_dotenv() 
     TESTING = True
-    SLOT_CHANCE = 20/100
+    SLOT_CHANCE = 1/4
     # SLOT_WIN = ":crossed_swords:"
     # SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:", ":frowning2:", ":skull:"]
 
