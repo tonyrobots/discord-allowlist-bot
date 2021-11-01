@@ -33,7 +33,7 @@ if not os.getenv("env") == "dev":
     os.environ['http_proxy'] = os.environ.get('FIXIE_URL', '')
     os.environ['https_proxy'] = os.environ.get('FIXIE_URL', '')
     TESTING = False
-    SLOT_CHANCE = 1/30
+    SLOT_CHANCE = 1/10
 
     # SLOT_WIN = ":crossed_swords:"
     # SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:",
@@ -104,12 +104,15 @@ async def on_ready():
     f'{bot.user} is connected to the following server(s):\n'
 
     for guild in bot.guilds:
-        print (guild.name)
         # if guild.name == GUILD:
         #     break
         print(
             f'{guild.name}(id: {guild.id})'
         )
+        print (guild.emojis)
+        SLOT_WIN = discord.utils.get(guild.emojis, name="LMaps_crown")
+
+
         await guild.me.edit(nick="Legend Maps Oracle") # Give it a cute nickname, can set this up custom per server TODO
 
 
