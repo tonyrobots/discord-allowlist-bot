@@ -28,17 +28,6 @@ base_dir = os.path.dirname(__file__)
 SLOT_WIN = ":crown:"
 SLOT_LOSS = [":skull_crossbones:", ":skull:", ":crescent_moon:", ":crossed_swords:", ":wolf:", ":black_cat:", ":bone:", ":dragon_face:", ":mushroom:", "🌞", "👹", "👻","👁️","🧝‍♂️","🧚‍♀️","🧙"]
 
-
-def get_list_from_file(filename):
-    # my_file = open(os.path.join(base_dir, filename), "r")
-    # my_list = my_file.readlines()
-    # my_file.close()
-    with open(os.path.join(base_dir, filename), "r") as file:
-        return file.read().splitlines()
-    file.close()
-
-
-
 if not os.getenv("env") == "dev":
     # PRODUCTION Settings
     os.environ['http_proxy'] = os.environ.get('FIXIE_URL', '')
@@ -68,6 +57,12 @@ ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
                                 "allowlist", "bots", "📝│whitelist","admin-test-channel"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
 ENABLE_ORACLE = True
+
+
+def get_list_from_file(filename):
+    with open(os.path.join(base_dir, filename), "r") as file:
+        return file.read().splitlines()
+    file.close()
 
 if ENABLE_ORACLE:
     # Load oracle strings
