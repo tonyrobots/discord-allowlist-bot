@@ -17,13 +17,26 @@ logging.basicConfig(level=logging.INFO)
 base_dir = os.path.dirname(__file__)
 
 # What do I have to do to get these emoji to show up??!?
-SLOT_WIN = '<:LMaps_crown:902296702264950805>'
-SLOT_LOSS = ["<:LMaps_wiz_sad:902296702164287489>",
-             "<:LMaps_shield:902296702327877653>",
-             "<:LMaps_torch:902296702504034324>",
-             "<:LMaps_skel:902296702357229569>",
-             "<:LMaps_swords:902296702470463598>",
-             "<:LMaps_potion:902296702424350741>"]
+# SLOT_WIN = '<:LMaps_crown:902296702264950805>'
+# SLOT_LOSS = ["<:LMaps_wiz_sad:902296702164287489>",
+#              "<:LMaps_shield:902296702327877653>",
+#              "<:LMaps_torch:902296702504034324>",
+#              "<:LMaps_skel:902296702357229569>",
+#              "<:LMaps_swords:902296702470463598>",
+#              "<:LMaps_potion:902296702424350741>"]
+
+SLOT_WIN = ":crown:"
+SLOT_LOSS = [":skull_crossbones:", ":skull:", ":crescent_moon:",":crossed_swords:",":wolf:",":black_cat:",":bone:",":dragon_face:",":mushroom:"]
+
+
+def get_list_from_file(filename):
+    # my_file = open(os.path.join(base_dir, filename), "r")
+    # my_list = my_file.readlines()
+    # my_file.close()
+    with open(os.path.join(base_dir, filename), "r") as file:
+        return file.read().splitlines()
+    file.close()
+
 
 
 if not os.getenv("env") == "dev":
@@ -55,12 +68,15 @@ ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
                                 "allowlist", "bots", "📝│whitelist","admin-test-channel"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
 ENABLE_ORACLE = True
+
 if ENABLE_ORACLE:
     # Load oracle strings
-    my_file = open(os.path.join(base_dir, "oracle_messages.txt"), "r")
-    ORACLE_MESSAGES = my_file.readlines()
-    my_file.close()
+    ORACLE_MESSAGES = get_list_from_file("oracle_messages.txt")
     print(f"Loaded {len(ORACLE_MESSAGES)} oracle messages from file.")
+
+    # load sacrifices
+    SACRIFICES = get_list_from_file("sacrifices.txt")
+    print(f"Loaded {len(SACRIFICES)} sacrifices from file.")
 
 
 # SLOT_WIN = discord.utils.get(bot.emojis, name="LMaps_crown")
@@ -99,7 +115,7 @@ async def on_ready():
         print(
             f'{guild.name}(id: {guild.id})'
         )
-        await guild.me.edit(nick="Legend Maps Oracle")
+        await guild.me.edit(nick="Legend Maps Oracle") # Give it a cute nickname, can set this up custom per server TODO
 
 
 
@@ -202,13 +218,13 @@ if ENABLE_ORACLE:
             return
         # do the regular sacrifice oracle message thing
         # await message.reply(f"You make your sacrifice to the Oracle, and a disembodied voice emerges from the shadows to say:\n `{random.choice(ORACLE_MESSAGES)}`")    
-        oracle_reply = f"You complete your sacrifice, and a swirling vision forms before you...\n"
+        oracle_reply = f"You lay {random.choice(SACRIFICES)} upon the altar, and a swirling vision forms before you...\n"
 
         if slot_win(message):
             # await message.reply(f"Suddenly, you hear a great and distant rumbling, and a searing light fills your eyes. You heart fills with radiance -- you have been *blessed* by the gods!")
             oracle_reply += f"{SLOT_WIN}   {SLOT_WIN}   {SLOT_WIN}\n"
             # oracle_reply += f"`{random.choice(ORACLE_MESSAGES)}`"
-            oracle_reply += f"Suddenly, you hear a great and distant rumbling, and a searing light fills your eyes. A voice from the shadows booms `YOU HAVE BEEN CHOSEN FOR MY BLESSING.`\n"
+            oracle_reply += f"Suddenly, you hear a great and distant rumbling, and a searing light fills your eyes. A voice from the shadows booms:\n `YOU HAVE BEEN CHOSEN FOR MY BLESSING.`\n"
             
             # set member role to Blessed
             # TODO clean this up!
@@ -217,7 +233,7 @@ if ENABLE_ORACLE:
             # only give uncommon wanderer if they don't have a higher role. Really gotta generalize this!
             if check_eligibility(message.author):
                 oracle_reply += (
-                    f"You already had an eligible role, so we'll just call you 'blessed.' ")
+                    f"Congratulations! You already had an eligible role, so we'll just call you 'blessed.' ")
                 await message.author.add_roles(winner_role1)
             else:
                 winner_role2 = get(message.guild.roles,
@@ -225,7 +241,7 @@ if ENABLE_ORACLE:
                 await message.author.add_roles(winner_role1, winner_role2)
 
                 oracle_reply += (
-                    f"You are now a {winner_role2}, and can now add yourself in the whitelist channel with command !allow <wallet address>.")
+                    f"Congratulations! You are now a {winner_role2}, and can now add yourself in the whitelist channel with command !allow <wallet address>.")
         else:
             # output loser images
             for i in range(2):
@@ -368,8 +384,6 @@ async def wrong_channel_message(message,allowed_channels):
     # filtered_allowed_channels = filter_channels(message, allowed_channels)
     # await message.reply("You can only do that in the following channels: " + ', '.join(filtered_allowed_channels))
     await message.reply("Sorry, you can't do that in this channel.")
-
-
 
 
 # def user_is_admin(member):
