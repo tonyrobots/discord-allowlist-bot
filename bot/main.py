@@ -163,8 +163,8 @@ async def check(message):
 
     if not my_list:
         promo_msg=""
-        if ENABLE_ORACLE:
-            promo_msg = "And make a !sacrifice to the Oracle in the #oracle channel for a chance to be granted a WL spot."
+        # if ENABLE_ORACLE:
+        #     promo_msg = "And make a !sacrifice to the Oracle in the #oracle channel for a chance to be granted a WL spot."
         await message.reply(f"Sorry, {message.author.nick or message.author.name}. You don't seem to have a role eligible for the allow list. Try !roles to see eligible roles. {promo_msg}")
         return
 
@@ -230,19 +230,21 @@ if ENABLE_ORACLE:
             # set member role to Blessed
             # TODO clean this up!
             winner_role1 = get(message.guild.roles, name="Blessed")
+            await message.author.add_roles(winner_role1)
+            oracle_reply += (f"Congratulations! You now have the 'Blessed' role.")
 
-            # only give uncommon wanderer if they don't have a higher role. Really gotta generalize this!
-            if check_eligibility(message.author):
-                oracle_reply += (
-                    f"Congratulations! You already had an eligible role, so we'll just call you 'blessed.' ")
-                await message.author.add_roles(winner_role1)
-            else:
-                winner_role2 = get(message.guild.roles,
-                                   name="Uncommon Wanderer")
-                await message.author.add_roles(winner_role1, winner_role2)
+            # # only give uncommon wanderer if they don't have a higher role. Really gotta generalize this!
+            # if check_eligibility(message.author):
+            #     oracle_reply += (
+            #         f"Congratulations! You already had an eligible role, so we'll just call you 'blessed.' ")
+            #     await message.author.add_roles(winner_role1)
+            # else:
+            #     winner_role2 = get(message.guild.roles,
+            #                        name="Uncommon Wanderer")
+            #     await message.author.add_roles(winner_role1, winner_role2)
 
-                oracle_reply += (
-                    f"Congratulations! You are now a {winner_role2}, and can now add yourself in the whitelist channel with command !allow <wallet address>.")
+            #     oracle_reply += (
+            #         f"Congratulations! You are now a {winner_role2}, and can now add yourself in the whitelist channel with command !allow <wallet address>.")
         else:
             # output loser images
             for i in range(2):
