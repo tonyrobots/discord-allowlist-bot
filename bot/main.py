@@ -153,9 +153,9 @@ async def allow(message, arg):
 @bot.command(brief='!check to check your current list status.', cog_name='General')
 async def check(message):
     #only allow in defined channel(s)
-    if not is_allowed_channel(message, ALLOWED_CHANNELS_ALLOWLISTER):
-        await wrong_channel_message(message,ALLOWED_CHANNELS_ALLOWLISTER)
-        return
+    # if not is_allowed_channel(message, ALLOWED_CHANNELS_ALLOWLISTER):
+    #     await wrong_channel_message(message,ALLOWED_CHANNELS_ALLOWLISTER)
+    #     return
     
     if message.author == bot.user:
         return
