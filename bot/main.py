@@ -5,6 +5,7 @@ import discord
 import datetime
 import re
 import random
+from discord.ext.commands.errors import BadArgument
 from discord.permissions import Permissions
 from discord.utils import get
 import pymongo
@@ -109,11 +110,11 @@ async def on_ready():
         print(
             f'{guild.name}(id: {guild.id})'
         )
-        print (guild.emojis)
+        # print (guild.emojis)
         SLOT_WIN = discord.utils.get(guild.emojis, name="LMaps_crown")
 
 
-        await guild.me.edit(nick="Legend Maps Oracle") # Give it a cute nickname, can set this up custom per server TODO
+        await guild.me.edit(nick="Legend Maps Allowlist Bot") # Give it a cute nickname, can set this up custom per server TODO
 
 
 
@@ -173,6 +174,40 @@ async def check(message):
     else:
         list_entry = get_list_entry(message)
         await message.reply(f'Hi, {message.author.nick or message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
+
+# checkid <discord userid>
+# listen for !checkid command
+@bot.command(brief='!checkid <discord user id> to check the status of a user by id (admin only).')
+# must have manage_guild (server) perms to do count command
+@commands.has_permissions(manage_guild=True)
+async def checkid(message, arg=0):
+    # #only allow in defined channel(s)
+    # if not is_allowed_channel(message, ALLOWED_CHANNELS_ALLOWLISTER):
+    #     await wrong_channel_message(message, ALLOWED_CHANNELS_ALLOWLISTER)
+    #     return
+    if message.author == bot.user:
+        return
+
+    #is arg a real user id?
+    try:
+        arg = int(arg)
+    except:
+        await message.reply("That's not a valid user id format.")
+        return
+
+    try:
+        user = await bot.fetch_user(arg)
+        # check id
+        list_entry = get_any_list_entry(user, message.guild.name)
+        if (list_entry):
+            # return list entries
+            await message.reply(f'User {list_entry["username"]} is in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
+        else:
+            # sorry you are not in the list
+            await message.reply(f"That ID is not on the list.")
+    except:
+        await message.reply("That's not a valid user id.")
+
 
 # listen for !roles command
 @bot.command(brief='!roles to see allow-listed Discord roles', cog_name='General')
@@ -329,11 +364,15 @@ def add_to_list(member, list, wallet, project):
             return f'You were already on the "{list}" list, but your record has been updated with the new wallet info: {wallet}'
 
 def get_list_entry(message):
-        project_name = message.guild.name  # should check to see if in allowed guilds
-        myquery = { "discordID": message.author.id, "project": project_name, "listname":check_eligibility(message.author)  }
-        list_entry = collection.find_one(myquery)
-        return list_entry
+    project_name = message.guild.name  # should check to see if in allowed guilds
+    myquery = { "discordID": message.author.id, "project": project_name, "listname":check_eligibility(message.author)  }
+    list_entry = collection.find_one(myquery)
+    return list_entry
 
+def get_any_list_entry(user, project_name):
+    myquery = {"discordID": user.id, "project": project_name}
+    list_entries = collection.find_one(myquery)
+    return list_entries
 
 def user_not_in_list(member, list, project):
     project_name = project  # should check to see if in allowed guilds
