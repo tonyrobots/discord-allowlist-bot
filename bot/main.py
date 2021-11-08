@@ -58,6 +58,7 @@ ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
                                 "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
 ENABLE_ORACLE = True
+ALLOW_LIST_OPEN = False
 
 
 def get_list_from_file(filename):
@@ -101,7 +102,9 @@ else:
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    await bot.change_presence(activity=discord.Game('Accepting wallet addresses'))
+    # await bot.change_presence(activity=discord.Game('Accepting wallet addresses'))
+    await bot.change_presence(activity=discord.Game('Allowlist is CLOSED'))
+
     f'{bot.user} is connected to the following server(s):\n'
 
     for guild in bot.guilds:
@@ -170,7 +173,10 @@ async def check(message):
         return
 
     if user_not_in_list(message.author, my_list, message.guild.name):
-        await message.reply(f"Hello, {message.author.nick or message.author.name}! You are eligible for the '{my_list}' list, but haven't added your wallet address yet. Use !allow <wallet address> to add yourself.")
+        if ALLOW_LIST_OPEN:
+            await message.reply(f"Hello, {message.author.nick or message.author.name}! You are eligible for the '{my_list}' list, but haven't added your wallet address yet. Use !allow <wallet address> to add yourself.")
+        else:
+            await message.reply(f"Hello, {message.author.nick or message.author.name}. Sorry, but you didn't add your wallet to the list in time, and the list is closed in prepartion for mint.")
     else:
         list_entry = get_list_entry(message)
         await message.reply(f'Hi, {message.author.nick or message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
