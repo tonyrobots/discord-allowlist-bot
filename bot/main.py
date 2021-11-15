@@ -119,8 +119,6 @@ async def on_ready():
 
         await guild.me.edit(nick="Legend Maps Allowlist Bot") # Give it a cute nickname, can set this up custom per server TODO
 
-
-
 ### command listeners
 
 # listen for !allow command
@@ -167,9 +165,12 @@ async def check(message):
 
     if not my_list:
         promo_msg=""
+        if ALLOW_LIST_OPEN:
+            promo_msg += "Try !roles to see eligible roles. "
+
         # if ENABLE_ORACLE:
-        #     promo_msg = "And make a !sacrifice to the Oracle in the #oracle channel for a chance to be granted a WL spot."
-        await message.reply(f"Sorry, {message.author.nick or message.author.name}. You don't seem to have a role eligible for the allow list. Try !roles to see eligible roles. {promo_msg}")
+        #     promo_msg += "And make a !sacrifice to the Oracle in the #oracle channel for a chance to be granted a WL spot."
+        await message.reply(f"Sorry, {message.author.nick or message.author.name}. You don't seem to have a role eligible for the allow list. {promo_msg}")
         return
 
     if user_not_in_list(message.author, my_list, message.guild.name):
