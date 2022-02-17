@@ -27,8 +27,8 @@ if not os.getenv("env") == "dev":
 
 else:
     # DEV Settings
-    from dotenv import load_dotenv
-    load_dotenv() 
+    from dotenv import load_dotenv 
+    load_dotenv()
     TESTING = True
     SLOT_CHANCE = 1/4
     # SLOT_WIN = ":crossed_swords:"
@@ -36,6 +36,7 @@ else:
 
 bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
+
 ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
 ALLOWED_CHANNELS_SLOTS = ["oracle", "admin-test-channel", "admin-test"]  # only used by slotmachine
@@ -102,7 +103,7 @@ async def on_ready():
         SLOT_WIN = discord.utils.get(guild.emojis, name="LMaps_crown")
 
 
-        await guild.me.edit(nick="Legend Maps Allowlist Bot") # Give it a cute nickname, can set this up custom per server TODO
+        await guild.me.edit(nick=f"{guild.name} Helper Bot") # Give it a cute nickname, can set this up custom per server TODO
 
 
 
@@ -422,4 +423,6 @@ async def wrong_channel_message(message,allowed_channels):
 # def user_is_admin(member):
 #     return member.hasPermissions(manage_guild=True)
 
-bot.run(TOKEN)
+# bot.run(TOKEN)
+print (TOKEN)
+print (MONGO_URL)
