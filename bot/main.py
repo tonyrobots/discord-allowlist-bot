@@ -17,33 +17,18 @@ logging.basicConfig(level=logging.INFO)
 
 base_dir = os.path.dirname(__file__)
 
-# What do I have to do to get these emoji to show up??!?
-# SLOT_WIN = '<:LMaps_crown:902296702264950805>'
-# SLOT_LOSS = ["<:LMaps_wiz_sad:902296702164287489>",
-#              "<:LMaps_shield:902296702327877653>",
-#              "<:LMaps_torch:902296702504034324>",
-#              "<:LMaps_skel:902296702357229569>",
-#              "<:LMaps_swords:902296702470463598>",
-#              "<:LMaps_potion:902296702424350741>"]
-
 SLOT_WIN = ":crown:"
 SLOT_LOSS = [":skull_crossbones:", ":skull:", ":crescent_moon:", ":crossed_swords:", ":wolf:", ":black_cat:", ":bone:", ":dragon_face:", ":mushroom:",":coin:",":gem:", "🌞", "👹", "👻","👁️","🧝‍♂️","🧚‍♀️","🧙"]
 
-if not os.getenv("env") == "dev":
+if os.getenv("env") == "prod":
     # PRODUCTION Settings
-    os.environ['http_proxy'] = os.environ.get('FIXIE_URL', '')
-    os.environ['https_proxy'] = os.environ.get('FIXIE_URL', '')
     TESTING = False
     SLOT_CHANCE = 1/10
 
-    # SLOT_WIN = ":crossed_swords:"
-    # SLOT_LOSS = [":dizzy_face:", ":face_with_spiral_eyes:",
-    #              ":frowning2:", ":skull:"]
-
 else:
     # DEV Settings
-    from dotenv import load_dotenv
-    load_dotenv() 
+    from dotenv import load_dotenv 
+    load_dotenv()
     TESTING = True
     SLOT_CHANCE = 1/4
     # SLOT_WIN = ":crossed_swords:"
@@ -51,14 +36,15 @@ else:
 
 bot = commands.Bot(command_prefix="!")
 TOKEN = os.getenv("DISCORD_TOKEN")
+
 ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
-ALLOWED_CHANNELS_SLOTS = ["oracle", "admin-test-channel"]  # only used by slotmachine
+ALLOWED_CHANNELS_SLOTS = ["oracle", "admin-test-channel", "admin-test"]  # only used by slotmachine
 ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
-                                "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel"]  # only used by allow lister, not !slot
+                                "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel", "admin-test"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
 ENABLE_ORACLE = True
-ALLOW_LIST_OPEN = False
+ALLOW_LIST_OPEN = True
 
 
 def get_list_from_file(filename):
@@ -88,7 +74,7 @@ if ENABLE_ORACLE:
 
 # print (bot.emojis)
 
-ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Friends", "Blerxers"]  # Wonder how to set via a config UI
+ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Friends", "Blerxers", "Allowlisted", "LM-holder", "gawds-holder"]  # Wonder how to set via a config UI
 
 cluster = MongoClient(MONGO_URL)
 db = cluster["AllowList"]
@@ -117,7 +103,7 @@ async def on_ready():
         SLOT_WIN = discord.utils.get(guild.emojis, name="LMaps_crown")
 
 
-        await guild.me.edit(nick="Legend Maps Allowlist Bot") # Give it a cute nickname, can set this up custom per server TODO
+        await guild.me.edit(nick=f"{guild.name[0 : 28]} Bot") # Give it a cute nickname, can set this up custom per server TODO
 
 ### command listeners
 
