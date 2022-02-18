@@ -20,7 +20,7 @@ base_dir = os.path.dirname(__file__)
 SLOT_WIN = ":crown:"
 SLOT_LOSS = [":skull_crossbones:", ":skull:", ":crescent_moon:", ":crossed_swords:", ":wolf:", ":black_cat:", ":bone:", ":dragon_face:", ":mushroom:",":coin:",":gem:", "🌞", "👹", "👻","👁️","🧝‍♂️","🧚‍♀️","🧙"]
 
-if not os.getenv("env") == "dev":
+if os.getenv("env") == "prod":
     # PRODUCTION Settings
     TESTING = False
     SLOT_CHANCE = 1/10
@@ -103,7 +103,7 @@ async def on_ready():
         SLOT_WIN = discord.utils.get(guild.emojis, name="LMaps_crown")
 
 
-        await guild.me.edit(nick=f"{guild.name} Helper Bot") # Give it a cute nickname, can set this up custom per server TODO
+        await guild.me.edit(nick=f"{guild.name[0 : 28]} Bot") # Give it a cute nickname, can set this up custom per server TODO
 
 
 
@@ -423,6 +423,4 @@ async def wrong_channel_message(message,allowed_channels):
 # def user_is_admin(member):
 #     return member.hasPermissions(manage_guild=True)
 
-# bot.run(TOKEN)
-print (TOKEN)
-print (MONGO_URL)
+bot.run(TOKEN)
