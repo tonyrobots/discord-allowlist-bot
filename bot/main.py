@@ -41,7 +41,7 @@ ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
 ALLOWED_CHANNELS_SLOTS = ["oracle", "admin-test-channel", "admin-test"]  # only used by slotmachine
 ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
-                                "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel", "admin-test"]  # only used by allow lister, not !slot
+                                "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel", "admin-test", "⛲│the-sanctum"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
 ENABLE_ORACLE = True
 ALLOW_LIST_OPEN = True
@@ -74,16 +74,17 @@ if ENABLE_ORACLE:
 
 # print (bot.emojis)
 
-ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Friends", "Blerxers", "Allowlisted", "LM-holder", "gawds-holder"]  # Wonder how to set via a config UI
+# ALLOWED_ROLES = ["Legendary Adventurer", "Epic Explorer", "Rare Seeker", "Uncommon Wanderer", "Friends", "Blerxers", "Blessed", "Allowlisted", "LM-holder", "gawds-holder"]  # Wonder how to set via a config UI
+ALLOWED_ROLES = ["Blessed"]  # Wonder how to set via a config UI
+
 
 cluster = MongoClient(MONGO_URL)
 db = cluster["AllowList"]
 if TESTING: 
-    collection = db["AllowList_test"]
+    collection = db["AllowList_adv_test"]
 else:
-    collection = db["AllowList_prod"]
+    collection = db["AllowList_adventurers"]
 
-# project_name = "CF Test"
 
 @bot.event
 async def on_ready():
