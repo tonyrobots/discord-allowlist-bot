@@ -90,7 +90,7 @@ else:
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     # await bot.change_presence(activity=discord.Game('Accepting wallet addresses'))
-    await bot.change_presence(activity=discord.Game('Allowlist is CLOSED'))
+    await bot.change_presence(activity=discord.Game('Sacrificing to the Oracle'))
 
     f'{bot.user} is connected to the following server(s):\n'
 
