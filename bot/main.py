@@ -39,7 +39,8 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 ALLOWED_GUILDS = os.getenv("ALLOWED_DISCORD_GUILDS") # Not yet checked against
 MONGO_URL = os.getenv("MONGO_URL")
-ALLOWED_CHANNELS_SLOTS = ["oracle", "admin-test-channel", "admin-test"]  # only used by slotmachine
+ALLOWED_CHANNELS_SLOTS = ["oracle", "admin-test-channel",
+                          "admin-test", "🔮│oracle"]  # only used by slotmachine/oracle
 ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
                                 "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel", "admin-test", "⛲│the-sanctum"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
@@ -104,7 +105,9 @@ async def on_ready():
         SLOT_WIN = discord.utils.get(guild.emojis, name="LMaps_crown")
 
 
-        await guild.me.edit(nick=f"{guild.name[0 : 28]} Bot") # Give it a cute nickname, can set this up custom per server TODO
+        # await guild.me.edit(nick=f"{guild.name[0 : 28]} Bot") # Give it a cute nickname, can set this up custom per server TODO
+        # Give it a cute nickname:
+        await guild.me.edit(nick="Legend Maps Oracle")
 
 ### command listeners
 
