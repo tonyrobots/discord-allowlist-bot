@@ -263,7 +263,7 @@ if ENABLE_ORACLE:
             # TODO clean this up!
             winner_role1 = get(message.guild.roles, name="Blessed")
             await message.author.add_roles(winner_role1)
-            oracle_reply += (f"Congratulations! You now have the 'Blessed' role.")
+            oracle_reply += (f"Congratulations! You now have the 'Blessed' role, and can add yourself to the allowlist in the #the-sanctum channel with command !allow <wallet address>.")
 
             # # only give uncommon wanderer if they don't have a higher role. Really gotta generalize this!
             # if check_eligibility(message.author):
@@ -275,8 +275,8 @@ if ENABLE_ORACLE:
             #                        name="Uncommon Wanderer")
             #     await message.author.add_roles(winner_role1, winner_role2)
 
-            #     oracle_reply += (
-            #         f"Congratulations! You are now a {winner_role2}, and can now add yourself in the whitelist channel with command !allow <wallet address>.")
+            # oracle_reply += (
+            #     f"Congratulations! You are now a {winner_role1}, and can now add yourself in the #the-sanctum channel with command !allow <wallet address>.")
         else:
             # output loser images
             for i in range(2):
