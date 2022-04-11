@@ -171,7 +171,7 @@ async def check(message):
         if ALLOW_LIST_OPEN:
             await message.reply(f"Hello, {message.author.nick or message.author.name}! You are eligible for the '{my_list}' list, but haven't added your wallet address yet. Use !allow <wallet address> to add yourself.")
         else:
-            await message.reply(f"Hello, {message.author.nick or message.author.name}. Sorry, but you didn't add your wallet to the list in time, and the list is closed in prepartion for mint.")
+            await message.reply(f"Hello, {message.author.nick or message.author.name}. Sorry, but you didn't add your wallet to the list in time, and the list is closed in preparation for mint.")
     else:
         list_entry = get_list_entry(message)
         await message.reply(f'Hi, {message.author.nick or message.author.name}! You are in list "{list_entry["listname"]}" with wallet {list_entry["wallet"]}')
