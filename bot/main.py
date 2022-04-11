@@ -45,7 +45,7 @@ ALLOWED_CHANNELS_ALLOWLISTER = ["whitelist", "whitelist_private_booth",
                                 "allowlist", "bots", "📝│allowlist", "📝│whitelist", "admin-test-channel", "admin-test", "⛲│the-sanctum"]  # only used by allow lister, not !slot
 ENABLE_SLOT = False
 ENABLE_ORACLE = True
-ALLOW_LIST_OPEN = True
+ALLOW_LIST_OPEN = False
 
 
 def get_list_from_file(filename):
@@ -91,7 +91,7 @@ else:
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     # await bot.change_presence(activity=discord.Game('Accepting wallet addresses'))
-    await bot.change_presence(activity=discord.Game('Sacrificing to the Oracle'))
+    await bot.change_presence(activity=discord.Game('Allowlist is closed.'))
 
     f'{bot.user} is connected to the following server(s):\n'
 
@@ -117,6 +117,10 @@ async def allow(message, arg):
     #only allow in defined channel(s)
     if not is_allowed_channel(message, ALLOWED_CHANNELS_ALLOWLISTER):
         await wrong_channel_message(message, ALLOWED_CHANNELS_ALLOWLISTER)
+        return
+
+    if not ALLOW_LIST_OPEN:
+        await message.reply(f"Hello, {message.author.nick or message.author.name}. Sorry, but you didn't add your wallet to the list in time, and the list is closed in prepartion for mint.")
         return
 
     if message.author == bot.user:
